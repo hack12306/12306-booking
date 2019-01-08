@@ -1,12 +1,11 @@
+# encoding: utf8
 """
 order.py
 @author Meng.yangyang
 @description 下单
 @created Tue Jan 08 2019 17:56:17 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 19:55:43 GMT+0800 (CST)
+@last-modified Tue Jan 08 2019 20:59:07 GMT+0800 (CST)
 """
-
-# encoding: utf8
 
 import json
 import copy

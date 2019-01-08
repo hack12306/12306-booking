@@ -1,12 +1,11 @@
+# encoding: utf8
 """
 utils.py
 @author Meng.yangyang
 @description 工具函数
 @created Mon Jan 07 2019 13:22:25 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 18:14:33 GMT+0800 (CST)
+@last-modified Tue Jan 08 2019 20:59:34 GMT+0800 (CST)
 """
-
-# encoding: utf8
 
 import os
 import json

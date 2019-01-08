@@ -1,12 +1,11 @@
+# encoding: utf8
 """
 pay.py
 @author Meng.yangyang
 @description 支付
 @created Mon Jan 07 2019 17:33:55 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 20:24:53 GMT+0800 (CST)
+@last-modified Tue Jan 08 2019 20:59:16 GMT+0800 (CST)
 """
-
-# encoding: utf8
 
 import os
 import json
