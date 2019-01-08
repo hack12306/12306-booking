@@ -1,8 +1,12 @@
-# encoding: utf8
+"""
+pay.py
+@author Meng.yangyang
+@description 支付
+@created Mon Jan 07 2019 17:33:55 GMT+0800 (CST)
+@last-modified Tue Jan 08 2019 18:14:59 GMT+0800 (CST)
+"""
 
-"""
-支付
-"""
+# encoding: utf8
 
 import os
 import json
@@ -66,6 +70,8 @@ def test_pay(sequence_no, bank_id=constants.BANK_ID_WX, **kwargs):
 
         with open(pay_filepath, 'w') as f:
             f.write(pay_business_third_pay_resp.content)
+
+        _logger.info('请用浏览器打开%s，完成支付！' % pay_filepath)
     finally:
         if platform.mac_ver()[0]:
             os.system('open %s' % pay_filepath)

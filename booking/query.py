@@ -1,8 +1,12 @@
-# encoding: utf8
+"""
+query.py
+@author Meng.yangyang
+@description 信息查询
+@created Mon Jan 07 2019 16:50:59 GMT+0800 (CST)
+@last-modified Tue Jan 08 2019 18:14:37 GMT+0800 (CST)
+"""
 
-"""
-信息查询
-"""
+# encoding: utf8
 
 import re
 from hack12306.query import TrainInfoQueryAPI

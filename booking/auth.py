@@ -1,8 +1,12 @@
-# encoding: utf8
+"""
+auth.py
+@author Meng.yangyang
+@description 认证
+@created Mon Jan 07 2019 16:35:01 GMT+0800 (CST)
+@last-modified Tue Jan 08 2019 18:12:03 GMT+0800 (CST)
+"""
 
-"""
-认证
-"""
+# encoding: utf8
 
 import os
 import time
@@ -23,7 +27,6 @@ def auth_qr():
     认证-二维码登录
     """
     try:
-        _logger.debug('### auth ###')
         train_auth_api = TrainAuthAPI()
 
         _logger.debug('1. auth init')
