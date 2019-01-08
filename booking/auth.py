@@ -3,7 +3,7 @@ auth.py
 @author Meng.yangyang
 @description 认证
 @created Mon Jan 07 2019 16:35:01 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 18:12:03 GMT+0800 (CST)
+@last-modified Tue Jan 08 2019 20:05:01 GMT+0800 (CST)
 """
 
 # encoding: utf8
@@ -20,6 +20,15 @@ from hack12306.auth import TrainAuthAPI
 from hack12306.user import TrainUserAPI
 
 _logger = logging.getLogger('booking')
+
+
+def auth_is_login(cookies=None):
+    """
+    检查用户是否登录
+    :param cookies JSON对象
+    :return True已登录, False未登录
+    """
+    return TrainAuthAPI().auth_check_login(cookies=cookies)
 
 
 def auth_qr():
@@ -78,8 +87,7 @@ def auth_qr():
         _logger.debug('cookies. %s' % json.dumps(cookies, ensure_ascii=False,))
         _logger.info('%s 登录成功。' % user_info_result['name'])
 
+        return cookies
     finally:
         if os.path.exists(qr_img_path):
             os.remove(qr_img_path)
-
-    return cookies

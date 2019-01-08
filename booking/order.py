@@ -3,7 +3,7 @@ order.py
 @author Meng.yangyang
 @description 下单
 @created Tue Jan 08 2019 17:56:17 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 18:13:09 GMT+0800 (CST)
+@last-modified Tue Jan 08 2019 19:55:43 GMT+0800 (CST)
 """
 
 # encoding: utf8
@@ -26,7 +26,7 @@ _logger = logging.getLogger('booking')
 confirm_submit_order = False
 
 
-def order_submit(train_info):
+def order_submit(**train_info):
     """
     订单-提交订单
     """
@@ -102,4 +102,6 @@ def order_submit(train_info):
         query_order_result['orderId'], confirm_passenger_result['token'])
     _logger.debug('order result. %s' % json.dumps(order_result, ensure_ascii=False))
 
-    # _logger.info('恭喜你！抢票成功。订单号：%s 车次：%s 座位席别：%s 乘车日期：%s 出发站：%s 到达站：%s 历时:%s')
+    _logger.info('恭喜你！抢票成功。订单号：%s 车次：%s 座位席别：%s 乘车日期：%s 出发站：%s 到达站：%s 历时:%s')
+
+    return query_order_result['orderId']
