@@ -4,22 +4,27 @@ query.py
 @author Meng.yangyang
 @description 信息查询
 @created Mon Jan 07 2019 16:50:59 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 20:59:23 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 00:16:57 GMT+0800 (CST)
 """
 
 import re
+import copy
+
+from hack12306.constants import SEAT_TYPE_CODE_MAP
 from hack12306.query import TrainInfoQueryAPI
 from hack12306.constants import SEAT_TYPE_CODE_MAP
 
+from . import exceptions
 
-def query_left_tickets(train_date, from_station, to_station, seat_types, trains=None):
+
+def query_left_tickets(train_date, from_station, to_station, seat_types, train_name=None):
     """
     信息查询-剩余车票
     :param train_date
     :param from_station
     :param to_station
     :param seat_types
-    :param trains
+    :param train_name
     :return JSON 对象
     """
     date_pattern = re.compile(r'^\d{4}-\d{2}-\d{2}$')
@@ -29,9 +34,49 @@ def query_left_tickets(train_date, from_station, to_station, seat_types, trains=
     assert frozenset(seat_types) <= frozenset(dict(SEAT_TYPE_CODE_MAP).keys()
                                               ), 'Invalid seat_types param. %s' % seat_types
 
-    result = TrainInfoQueryAPI().info_query_left_tickets(train_date, from_station, to_station)
+    train_info = {}
 
-    # TODO seat_type_code => result
+    trains = TrainInfoQueryAPI().info_query_left_tickets(train_date, from_station, to_station)
+    if train_name:
+        for train in trains:
+            if train['train_name'] == train_name:
+                train_info = copy.deepcopy(train)
+                break
+        else:
+            raise exceptions.BookingTrainNoLeftTicket()
+    else:
+        # TODO Optimize multiple trains select type
+        for train in trains:
+            for seat_type in seat_types:
+                if train.get(seat_type, ''):
+                    train_info = copy.deepcopy(train)
+                    break
+        else:
+            raise exceptions.BookingTrainNoLeftTicket()
+
+    if not  train_info:
+        raise exceptions.BookingTrainNoLeftTicket()
+
+    select_seat_type = None
+    for seat_type in seat_types:
+        if train_info.get(seat_type, ''):
+            select_seat_type = seat_type
+            break
+    else:
+        raise exceptions.BookingTrainNoLeftTicket()
+
+    result = {
+        'from_station': train_info['from_station'],
+        'to_station': train_info['to_station'],
+        'seat_type': select_seat_type,
+        'seat_type_code': SEAT_TYPE_CODE_MAP[select_seat_type],
+        'departure_time': train_info['departure_time'],
+        'arrival_time': train_info['arrival_time'],
+        'secret': train_info['secret'],
+        'train_name': train_info['train_name'],
+        'duration': train_info['duration'],
+        'train_num': train_info['train_num']
+    }
     return result
 
 

@@ -4,7 +4,7 @@ exceptions.py
 @author Meng.yangyang
 @description 异常
 @created Mon Jan 07 2019 17:48:48 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 20:59:00 GMT+0800 (CST)
+@last-modified Tue Jan 08 2019 23:32:29 GMT+0800 (CST)
 """
 
 
@@ -17,4 +17,10 @@ class BookingBaseException(Exception):
 class BookingOrderNoExists(BookingBaseException):
     """
     订单不存在
+    """
+
+
+class BookingTrainNoLeftTicket(BookingBaseException):
+    """
+    无票
     """

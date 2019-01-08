@@ -15,7 +15,7 @@ setuptools.setup(
     license='MIT',
     url="https://github.com/hack12306/12306-booking",
     packages=setuptools.find_packages(),
-    install_requires=["Pillow>=5.4.1", "hack12306>=0.1.2"],
+    install_requires=["Pillow>=5.4.1", "hack12306>=0.1.2", "click==7.0"],
     classifiers=[
         "Programming Language :: Python :: 2",
         "License :: OSI Approved :: MIT License",

@@ -4,7 +4,7 @@ run.py
 @author Meng.yangyang
 @description Booking entry point
 @created Tue Jan 08 2019 19:38:32 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 20:59:26 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 00:06:30 GMT+0800 (CST)
 """
 
 import os
@@ -67,7 +67,7 @@ def run(train_date, train_name, seat_types, from_station, to_station, pay_channe
 
             # query left tickets
             if booking_status == BOOKING_STATUS_QUERY_LEFT_TICKET:
-                train_info = query_left_tickets(train_date, from_station, to_station, seat_types)
+                train_info = query_left_tickets(train_date, from_station, to_station, seat_types, train_name)
                 booking_status = BOOKING_STATUS_ORDER_SUBMIT
 
             # subit order

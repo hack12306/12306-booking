@@ -4,7 +4,7 @@ utils.py
 @author Meng.yangyang
 @description 工具函数
 @created Mon Jan 07 2019 13:22:25 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 20:59:34 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 00:09:46 GMT+0800 (CST)
 """
 
 import os
@@ -59,3 +59,12 @@ def get_public_ip():
     if resp.status_code != 200:
         raise Exception('Network error')
     return json.loads(resp.content)['origin'].encode('utf8')
+
+
+def check_seat_types(seat_types):
+    from hack12306.constants import SEAT_TYPE_CODE_MAP
+
+    assert isinstance(seat_types, (list, tuple))
+    if not frozenset(seat_types) <= frozenset(dict(SEAT_TYPE_CODE_MAP).keys()):
+        return False
+    return True
