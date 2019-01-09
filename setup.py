@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="12306 booking",
-    version="0.0.1",
+    version="0.0.2",
     author="Meng.yangyang",
     author_email="mengyy_linux@163.com",
     description="12306 booking tool",
@@ -15,7 +15,7 @@ setuptools.setup(
     license='MIT',
     url="https://github.com/hack12306/12306-booking",
     packages=setuptools.find_packages(),
-    install_requires=["Pillow>=5.4.1", "hack12306>=0.1.4", "click==7.0"],
+    install_requires=["Pillow>=5.4.1", "hack12306>=0.1.9", "click==7.0"],
     entry_points={
         'console_scripts': [
             '123060-booking=booking.command:booking'

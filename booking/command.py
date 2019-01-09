@@ -5,7 +5,7 @@ command.py
 @author Meng.yangyang
 @description 
 @created Tue Jan 08 2019 23:39:26 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 16:17:28 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 22:55:30 GMT+0800 (CST)
 """
 
 import re
@@ -25,11 +25,12 @@ _logger = logging.getLogger('booking')
 @click.command()
 @click.option('--train-date', required=True, help=u'乘车日期，格式：YYYY-mm-dd')
 @click.option('--train-name', required=True, help=u'车次')
-@click.option('--seat-types', required=True, help=u'座位席别')
+@click.option('--seat-types', required=True, help=u'座位席别， 例如：硬卧,硬座')
 @click.option('--from-station', required=True, help=u'始发站')
 @click.option('--to-station', required=True, help=u'到达站')
 @click.option('--pay-channel', type=click.Choice(['微信', '支付宝']), default='微信', help=u'支付通道，微信，支付宝')
-def booking(train_date, train_name, seat_types, from_station, to_station, pay_channel):
+@click.option('--passengers', help='乘客，例如：任正非,王石')
+def booking(train_date, train_name, seat_types, from_station, to_station, pay_channel, passengers):
     initialize()
 
     date_pattern = re.compile(r'^\d{4}-\d{2}-\d{2}$')
@@ -56,7 +57,10 @@ def booking(train_date, train_name, seat_types, from_station, to_station, pay_ch
     else:
         assert False
 
+    if passengers:
+        passengers = passengers.split(',')
+
     _logger.info(u'订票信息。乘车日期：%s 车次：%s 座席：%s 始发站:%s to_station:%s 支付通道：%s' %
                  (train_date, train_name, json.dumps(seat_types, ensure_ascii=False), from_station, to_station, pay_channel))
 
-    booking_run_loop(train_date, train_name, seat_types, from_station, to_station, pay_channel)
+    booking_run_loop(train_date, train_name, seat_types, from_station, to_station, pay_channel, passengers=passengers)

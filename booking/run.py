@@ -4,12 +4,13 @@ run.py
 @author Meng.yangyang
 @description Booking entry point
 @created Tue Jan 08 2019 19:38:32 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 16:10:59 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 23:13:18 GMT+0800 (CST)
 """
 
 import os
 import re
 import time
+import json
 import logging
 import platform
 import logging.config
@@ -17,8 +18,10 @@ from hack12306.constants import (BANK_ID_WX, BANK_ID_MAP, SEAT_TYPE_CODE_MAP,)
 from hack12306.exceptions import TrainUserNotLogin, TrainBaseException
 
 from . import settings
+from . import exceptions
 from .pay import pay_order
 from .auth import auth_qr, auth_is_login
+from .user import user_passengers
 from .order import order_submit, order_check_no_complete
 from .query import query_left_tickets, query_station_code_map
 
@@ -58,7 +61,7 @@ def initialize():
     settings.INIT_DONE = True
 
 
-def run(train_date, train_name, seat_types, from_station, to_station, pay_channel=BANK_ID_WX, **kwargs):
+def run(train_date, train_name, seat_types, from_station, to_station, pay_channel=BANK_ID_WX, passengers=None, **kwargs):
     """
     Booking entry point.
     """
@@ -78,6 +81,8 @@ def run(train_date, train_name, seat_types, from_station, to_station, pay_channe
 
     train_info = {}
     order_no = None
+    check_passengers = False
+    passenger_id_nos = []
     booking_status = BOOKING_STATUS_QUERY_LEFT_TICKET
 
     while True:
@@ -87,6 +92,28 @@ def run(train_date, train_name, seat_types, from_station, to_station, pay_channe
                 cookies = auth_qr()
                 settings.COOKIES = cookies
 
+            # check passengers
+            if not check_passengers:
+                passenger_infos = user_passengers()
+                if passengers:
+                    passenger_name_id_map = {}
+                    for passenger_info in passenger_infos:
+                        passenger_name_id_map[passenger_info['passenger_name']] = passenger_info['passenger_id_no']
+
+                    assert frozenset(passengers) <= frozenset(passenger_name_id_map.keys()), u'无效的乘客. %s' % json.dumps(
+                        list(frozenset(passengers) - frozenset(passenger_name_id_map.keys())), ensure_ascii=False)
+
+                    for passenger in passengers:
+                        _logger.info('订票乘客信息。姓名：%s 身份证号:%s' % (passenger, passenger_name_id_map[passenger]))
+                else:
+                    passenger_id_nos = [passenger_infos[0]['passenger_id_no']]
+                    _logger.info(
+                        '订票乘客信息。姓名:%s 身份证号:%s' %
+                        (passenger_infos[0]['passenger_name'],
+                         passenger_info['passenger_id_no']))
+
+                check_passengers = True
+
             # order not complete
             if order_check_no_complete():
                 booking_status = BOOKING_STATUS_PAY_ORDER
@@ -95,23 +122,27 @@ def run(train_date, train_name, seat_types, from_station, to_station, pay_channe
 
             # query left tickets
             if booking_status == BOOKING_STATUS_QUERY_LEFT_TICKET:
+                _logger.info('查询余票')
                 train_info = query_left_tickets(train_date, from_station, to_station, seat_types, train_name)
                 booking_status = BOOKING_STATUS_ORDER_SUBMIT
 
             # subit order
             elif booking_status == BOOKING_STATUS_ORDER_SUBMIT:
                 try:
-                    order_no = order_submit(**train_info)
+                    _logger.info('提交订单')
+                    order_no = order_submit(passenger_id_nos, **train_info)
                 except TrainBaseException as e:
                     booking_status = BOOKING_STATUS_QUERY_LEFT_TICKET
                     _logger.exception(e)
                     continue
-
-                # submit order successfully
-                booking_status = BOOKING_STATUS_PAY_ORDER
+                else:
+                    # submit order successfully
+                    if order_no:
+                        booking_status = BOOKING_STATUS_PAY_ORDER
 
             # pay
             elif booking_status == BOOKING_STATUS_PAY_ORDER:
+                _logger.info('支付订单')
                 pay_order(pay_channel)
                 # pay success and exit
                 return
@@ -128,7 +159,13 @@ def run(train_date, train_name, seat_types, from_station, to_station, pay_channe
             _logger.exception(e)
 
         except Exception as e:
-            _logger.exception(e)
             if isinstance(e, AssertionError):
+                _logger.exception(e)
                 _logger.error('系统内部运行异常，请重新执行程序！')
                 os._exit(-1)
+            elif isinstance(e, exceptions.BookingOrderCancelExceedLimit):
+                _logger.exception(e)
+                _logger.error('用户今日订单取消次数超限，请明天再重新抢票！')
+                os._exit(-2)
+            else:
+                _logger.exception(e)

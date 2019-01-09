@@ -4,7 +4,7 @@ exceptions.py
 @author Meng.yangyang
 @description 异常
 @created Mon Jan 07 2019 17:48:48 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 16:25:29 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 22:37:07 GMT+0800 (CST)
 """
 
 
@@ -23,4 +23,16 @@ class BookingOrderNoExists(BookingBaseException):
 class BookingTrainNoLeftTicket(BookingBaseException):
     """
     无票
+    """
+
+
+class BookingOrderQueryTimeOut(BookingBaseException):
+    """
+    订单查询超时
+    """
+
+
+class BookingOrderCancelExceedLimit(BookingBaseException):
+    """
+    订单取消次数超限
     """
