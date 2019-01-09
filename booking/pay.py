@@ -4,7 +4,7 @@ pay.py
 @author Meng.yangyang
 @description 支付
 @created Mon Jan 07 2019 17:33:55 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 20:59:16 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 16:49:44 GMT+0800 (CST)
 """
 
 import os
@@ -20,13 +20,25 @@ from hack12306.utils import tomorrow, JSONEncoder
 
 from . import settings
 from . import exceptions
+from .order import order_no_complete
 from .utils import get_public_ip
 
 _logger = logging.getLogger('booking')
 
 
-def pay_order(sequence_no, bank_id=constants.BANK_ID_WX, **kwargs):
+def pay_order(bank_id=constants.BANK_ID_WX, **kwargs):
+    """
+    支付订单
+    :param sequence_no 订单后
+    :bank_id 支付渠道ID
+    :return None
+    """
     train_pay_api = TrainPayAPI()
+
+    # 0.查询未支付订单
+    sequence_no = order_no_complete()
+    if not sequence_no:
+        raise exceptions.BookingOrderNoExists('')
 
     # 1.支付未完成订单
     pay_no_complete_order_result = train_pay_api.pay_no_complete_order(sequence_no, cookies=settings.COOKIES)
@@ -61,8 +73,9 @@ def pay_order(sequence_no, bank_id=constants.BANK_ID_WX, **kwargs):
     _logger.debug('pay third resp status code. %s' % pay_business_third_pay_resp.status_code)
     _logger.debug('pay third resp. %s' % pay_business_third_pay_resp.content)
 
+    # 6.打开浏览器扫码完成支付
     try:
-        pay_filepath = settings.PAY_FILEPATH.format(date=datetime.date.today().stftime('%Y%m%d'),
+        pay_filepath = settings.PAY_FILEPATH.format(date=datetime.date.today().strftime('%Y%m%d'),
                                                     order_no=sequence_no, bank_id=bank_id)
         if not os.path.exists(os.path.dirname(pay_filepath)):
             os.makedirs(os.path.dirname(pay_filepath))
@@ -72,8 +85,8 @@ def pay_order(sequence_no, bank_id=constants.BANK_ID_WX, **kwargs):
 
         _logger.info('请用浏览器打开%s，完成支付！' % pay_filepath)
     finally:
-        if platform.mac_ver()[0]:
-            os.system('open %s' % pay_filepath)
-        else:
-            if os.path.exists(pay_filepath):
-                os.remove(pay_filepath)
+        if os.path.exists(pay_filepath):
+            if platform.mac_ver()[0]:
+                os.system('open %s' % pay_filepath)
+
+            os.remove(pay_filepath)

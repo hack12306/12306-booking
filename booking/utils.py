@@ -4,7 +4,7 @@ utils.py
 @author Meng.yangyang
 @description 工具函数
 @created Mon Jan 07 2019 13:22:25 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 00:09:46 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 16:31:28 GMT+0800 (CST)
 """
 
 import os
@@ -55,7 +55,7 @@ def qr_terminal_draw(filepath):
 
 
 def get_public_ip():
-    resp = requests.get('https://httpbin.org/ip')
+    resp = requests.get('http://httpbin.org/ip')
     if resp.status_code != 200:
         raise Exception('Network error')
     return json.loads(resp.content)['origin'].encode('utf8')

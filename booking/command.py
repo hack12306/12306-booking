@@ -5,7 +5,7 @@ command.py
 @author Meng.yangyang
 @description 
 @created Tue Jan 08 2019 23:39:26 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 12:31:23 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 16:17:28 GMT+0800 (CST)
 """
 
 import re
@@ -48,7 +48,6 @@ def booking(train_date, train_name, seat_types, from_station, to_station, pay_ch
     from_station = station_code_map[from_station]
     to_station = station_code_map[to_station]
 
-    print '@@ pay_channel:%s %s' % (pay_channel, type(pay_channel))
     assert pay_channel in ('微信', '支付宝'), '不支持的支付通道. %s' % pay_channel
     if pay_channel == '微信':
         pay_channel = BANK_ID_WX

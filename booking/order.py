@@ -4,7 +4,7 @@ order.py
 @author Meng.yangyang
 @description 下单
 @created Tue Jan 08 2019 17:56:17 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 12:20:14 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 16:29:04 GMT+0800 (CST)
 """
 
 import json
@@ -22,7 +22,29 @@ from . import settings
 
 _logger = logging.getLogger('booking')
 
-confirm_submit_order = False
+__all__ = ('order_check_no_complete', 'order_submit', 'order_no_complete')
+
+
+def order_no_complete():
+    """
+    订单-未支付订单
+    """
+    orders = TrainOrderAPI().order_query_no_complete(cookies=settings.COOKIES)
+    _logger.debug('order no complete orders. %s' % json.dumps(orders, ensure_ascii=False))
+    if not orders:
+        return None
+    return orders[0]['sequence_no']
+
+
+def order_check_no_complete():
+    """
+    订单-检查是有未支付订单
+    :return True:有支付订单 False:没有未支付订单
+    """
+    if order_no_complete():
+        return True
+    else:
+        return False
 
 
 def order_submit(**train_info):

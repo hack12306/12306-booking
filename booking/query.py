@@ -4,7 +4,7 @@ query.py
 @author Meng.yangyang
 @description 信息查询
 @created Mon Jan 07 2019 16:50:59 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 12:20:59 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 16:27:39 GMT+0800 (CST)
 """
 
 import re
@@ -41,7 +41,7 @@ def query_left_tickets(train_date, from_station, to_station, seat_types, train_n
     train_info = {}
 
     trains = TrainInfoQueryAPI().info_query_left_tickets(train_date, from_station, to_station)
-    _logger.debug('query left tickets. %s' % json.dumps(trains, ensure_ascii=False))
+    # _logger.debug('query left tickets. %s' % json.dumps(trains, ensure_ascii=False))
     if train_name:
         for train in trains:
             if train['train_name'] == train_name:
@@ -69,6 +69,8 @@ def query_left_tickets(train_date, from_station, to_station, seat_types, train_n
             break
     else:
         raise exceptions.BookingTrainNoLeftTicket()
+
+    _logger.debug('query left tickets train info. %s' % json.dumps(train_info, ensure_ascii=False))
 
     result = {
         'train_date': train_date,

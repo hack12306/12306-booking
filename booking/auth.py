@@ -4,7 +4,7 @@ auth.py
 @author Meng.yangyang
 @description 认证
 @created Mon Jan 07 2019 16:35:01 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 12:32:27 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 16:26:20 GMT+0800 (CST)
 """
 
 
@@ -18,6 +18,9 @@ from PIL import Image
 
 from hack12306.auth import TrainAuthAPI
 from hack12306.user import TrainUserAPI
+from hack12306.exceptions import TrainUserNotLogin
+
+from . import settings
 
 _logger = logging.getLogger('booking')
 
@@ -53,8 +56,9 @@ def auth_qr():
         with open(qr_img_path, 'wb') as f:
             f.write(base64.b64decode(result['image']))
 
-        im = Image.open(qr_img_path)
-        im.show()
+        # open qr image with browser
+        cmd = settings.CHROME_APP_OPEN_CMD.format(filepath=qr_img_path)
+        os.system(cmd)
 
         _logger.debug('3. auth check qr')
         for _ in range(6):
@@ -68,9 +72,8 @@ def auth_qr():
 
             time.sleep(3)
         else:
-            _logger.error('scan qr login error and exit.')
-            _logger.error('二维码扫描失败，请重新运行程序！')
-            os._exists(-1)
+            _logger.error('二维码扫描失败，重新生成二维码')
+            raise TrainUserNotLogin('扫描述二维码失败')
 
         uamtk_result = train_auth_api.auth_uamtk(qr_check_result['uamtk'], cookies=cookie_dict)
         _logger.debug('4. auth uamtk result. %s' % json.dumps(uamtk_result, ensure_ascii=False))
