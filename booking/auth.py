@@ -4,7 +4,7 @@ auth.py
 @author Meng.yangyang
 @description 认证
 @created Mon Jan 07 2019 16:35:01 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 20:58:52 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 12:32:27 GMT+0800 (CST)
 """
 
 
@@ -85,7 +85,7 @@ def auth_qr():
         user_info_result = TrainUserAPI().user_info(cookies=cookies)
         _logger.debug('%s login successfully.' % user_info_result['name'])
         _logger.debug('cookies. %s' % json.dumps(cookies, ensure_ascii=False,))
-        _logger.info('%s 登录成功。' % user_info_result['name'])
+        _logger.info('%s 登录成功。' % user_info_result['name'].encode('utf8'))
 
         return cookies
     finally:

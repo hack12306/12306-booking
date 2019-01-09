@@ -4,7 +4,7 @@ order.py
 @author Meng.yangyang
 @description 下单
 @created Tue Jan 08 2019 17:56:17 GMT+0800 (CST)
-@last-modified Tue Jan 08 2019 20:59:07 GMT+0800 (CST)
+@last-modified Wed Jan 09 2019 12:20:14 GMT+0800 (CST)
 """
 
 import json
