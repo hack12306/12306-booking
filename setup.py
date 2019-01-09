@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="12306 booking",
+    name="12306-booking",
     version="0.1.0",
     author="Meng.yangyang",
     author_email="mengyy_linux@163.com",
