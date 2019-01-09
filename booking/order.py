@@ -4,7 +4,7 @@ order.py
 @author Meng.yangyang
 @description 下单
 @created Tue Jan 08 2019 17:56:17 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 23:16:34 GMT+0800 (CST)
+@last-modified Thu Jan 10 2019 07:24:12 GMT+0800 (CST)
 """
 
 import re
@@ -141,7 +141,7 @@ def order_submit(passenger_id_nos, **train_info):
         confirm_ticket_result, ensure_ascii=False, cls=JSONEncoder))
 
     # 6. 下单-查询订单
-    try_times = 5
+    try_times = 4
     while try_times > 0:
         query_order_result = train_order_api.order_confirm_passenger_query_order(
             confirm_passenger_result['token'], cookies=settings.COOKIES)
@@ -154,13 +154,13 @@ def order_submit(passenger_id_nos, **train_info):
         else:
             # 今日订单取消次数超限，无法继续订票
             error_code = query_order_result.get('errorcode')
-            error_msg = query_order_result.get('msg').encode('utf8')
+            error_msg = query_order_result.get('msg', '').encode('utf8')
             order_cancel_exceed_limit_pattern = re.compile(r'取消次数过多')
 
             if error_code == '0' and order_cancel_exceed_limit_pattern.search(error_msg):
                raise exceptions.BookingOrderCancelExceedLimit(query_order_result['msg'].encode('utf8'))
 
-        time.sleep(0.6)
+        time.sleep(0.5)
         try_times -= 1
     else:
         raise exceptions.BookingOrderQueryTimeOut()

@@ -4,7 +4,7 @@ run.py
 @author Meng.yangyang
 @description Booking entry point
 @created Tue Jan 08 2019 19:38:32 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 23:13:18 GMT+0800 (CST)
+@last-modified Thu Jan 10 2019 07:19:58 GMT+0800 (CST)
 """
 
 import os
@@ -104,11 +104,12 @@ def run(train_date, train_name, seat_types, from_station, to_station, pay_channe
                         list(frozenset(passengers) - frozenset(passenger_name_id_map.keys())), ensure_ascii=False)
 
                     for passenger in passengers:
-                        _logger.info('订票乘客信息。姓名：%s 身份证号:%s' % (passenger, passenger_name_id_map[passenger]))
+                        _logger.info(u'订票乘客信息。姓名：%s 身份证号:%s' % (passenger, passenger_name_id_map[passenger]))
+                        passenger_id_nos.append(passenger_name_id_map[passenger])
                 else:
                     passenger_id_nos = [passenger_infos[0]['passenger_id_no']]
                     _logger.info(
-                        '订票乘客信息。姓名:%s 身份证号:%s' %
+                        u'订票乘客信息。姓名:%s 身份证号:%s' %
                         (passenger_infos[0]['passenger_name'],
                          passenger_info['passenger_id_no']))
 
@@ -132,12 +133,14 @@ def run(train_date, train_name, seat_types, from_station, to_station, pay_channe
                     _logger.info('提交订单')
                     order_no = order_submit(passenger_id_nos, **train_info)
                 except TrainBaseException as e:
+                    _logger.info('提交订单失败')
                     booking_status = BOOKING_STATUS_QUERY_LEFT_TICKET
                     _logger.exception(e)
                     continue
                 else:
                     # submit order successfully
                     if order_no:
+                        _logger.info('提交订单成功')
                         booking_status = BOOKING_STATUS_PAY_ORDER
 
             # pay
