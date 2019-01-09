@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="12306 booking",
-    version="0.0.2",
+    version="0.1.0",
     author="Meng.yangyang",
     author_email="mengyy_linux@163.com",
     description="12306 booking tool",
