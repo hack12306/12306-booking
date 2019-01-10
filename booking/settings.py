@@ -1,6 +1,7 @@
 # encoding: utf8
 
 import os
+import logging
 
 INIT_DONE = False
 
@@ -19,17 +20,23 @@ LOGGING = {
     'version': 1,
     'formatters': {
         'default': {
-            'format': '%(asctime)s|%(levelname)s|%(message)s'
+            'format': '%(asctime)s - %(levelname)s - %(message)s'
         },
         'app': {
-            'format': '%(asctime)s|%(levelname)s|%(module)s|%(funcName)s|%(lineno)d|%(message)s'
+            'format': '%(asctime)s - %(levelname)s - %(module)s::%(funcName)s:%(lineno)d - %(message)s'
         },
+    },
+    'filters': {
+        'log_level': {
+            '()': 'booking._logging.LogLevelFilter',
+        }
     },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'default',
             'level': 'INFO',
+            'filters': ['log_level'],
         },
         'app': {
             'class': 'logging.handlers.WatchedFileHandler',
