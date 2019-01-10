@@ -4,7 +4,7 @@ order.py
 @author Meng.yangyang
 @description 下单
 @created Tue Jan 08 2019 17:56:17 GMT+0800 (CST)
-@last-modified Thu Jan 10 2019 09:26:45 GMT+0800 (CST)
+@last-modified Thu Jan 10 2019 09:28:32 GMT+0800 (CST)
 """
 
 import re
@@ -112,7 +112,7 @@ def order_submit(passenger_id_nos, **train_info):
         passenger_ticket_str, old_passenger_str, cookies=settings.COOKIES)
     _logger.debug('order check order result. %s' % json.dumps(check_order_result, ensure_ascii=False, cls=JSONEncoder))
     if not check_order_result['submitStatus']:
-        raise exceptions.BookingSubmitOrderError(check_order_result.get('errMsg', '提交订单失败'))
+        raise exceptions.BookingSubmitOrderError(check_order_result.get('errMsg', u'提交订单失败').encode('utf8'))
 
     # 4. 下单-获取排队数量
     queue_count_result = train_order_api.order_confirm_passenger_get_queue_count(

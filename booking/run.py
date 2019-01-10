@@ -4,7 +4,7 @@ run.py
 @author Meng.yangyang
 @description Booking entry point
 @created Tue Jan 08 2019 19:38:32 GMT+0800 (CST)
-@last-modified Thu Jan 10 2019 07:29:46 GMT+0800 (CST)
+@last-modified Thu Jan 10 2019 09:33:44 GMT+0800 (CST)
 """
 
 import os
@@ -132,7 +132,7 @@ def run(train_date, train_name, seat_types, from_station, to_station, pay_channe
                 try:
                     _logger.info('提交订单')
                     order_no = order_submit(passenger_id_nos, **train_info)
-                except TrainBaseException as e:
+                except (TrainBaseException, exceptions.BookingBaseException) as e:
                     _logger.info('提交订单失败')
                     booking_status = BOOKING_STATUS_QUERY_LEFT_TICKET
                     _logger.exception(e)
