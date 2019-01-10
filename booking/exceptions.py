@@ -4,7 +4,7 @@ exceptions.py
 @author Meng.yangyang
 @description 异常
 @created Mon Jan 07 2019 17:48:48 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 22:37:07 GMT+0800 (CST)
+@last-modified Thu Jan 10 2019 09:26:13 GMT+0800 (CST)
 """
 
 
@@ -35,4 +35,9 @@ class BookingOrderQueryTimeOut(BookingBaseException):
 class BookingOrderCancelExceedLimit(BookingBaseException):
     """
     订单取消次数超限
+    """
+
+class BookingSubmitOrderError(BookingBaseException):
+    """
+    提交订单是吧
     """
