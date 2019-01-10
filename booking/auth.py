@@ -4,7 +4,7 @@ auth.py
 @author Meng.yangyang
 @description 认证
 @created Mon Jan 07 2019 16:35:01 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 16:26:20 GMT+0800 (CST)
+@last-modified Thu Jan 10 2019 11:53:01 GMT+0800 (CST)
 """
 
 
@@ -31,7 +31,10 @@ def auth_is_login(cookies=None):
     :param cookies JSON对象
     :return True已登录, False未登录
     """
-    return TrainAuthAPI().auth_check_login(cookies=cookies)
+    result = TrainAuthAPI().auth_check_login(cookies=cookies)
+    if not result:
+        _logger.debug('会话已过期，请重新登录!')
+    return result
 
 
 def auth_qr():

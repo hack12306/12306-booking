@@ -5,6 +5,7 @@ import logging
 
 INIT_DONE = False
 
+QUERY_LEFT_TICKET_COUNTER_FILE = '/tmp/12306-booking/left_ticket_counter'
 SLEEP_INTERVAL = 1
 
 COOKIES = {}
