@@ -6,7 +6,7 @@ import logging
 INIT_DONE = False
 
 QUERY_LEFT_TICKET_COUNTER_FILE = '/tmp/12306-booking/left_ticket_counter'
-SLEEP_INTERVAL = 1
+SLEEP_INTERVAL = 0.6
 
 COOKIES = {}
 PAY_FILEPATH = './{date}-{order_no}-{bank_id}.html'
