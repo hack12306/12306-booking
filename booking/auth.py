@@ -4,7 +4,7 @@ auth.py
 @author Meng.yangyang
 @description 认证
 @created Mon Jan 07 2019 16:35:01 GMT+0800 (CST)
-@last-modified Thu Jan 10 2019 11:53:01 GMT+0800 (CST)
+@last-modified Fri Jan 11 2019 06:49:23 GMT+0800 (CST)
 """
 
 
@@ -42,6 +42,8 @@ def auth_qr():
     认证-二维码登录
     """
     try:
+        qr_img_path = '/tmp/12306/booking/login-qr-%s.jpeg' % uuid.uuid1().hex
+
         train_auth_api = TrainAuthAPI()
 
         _logger.debug('1. auth init')
@@ -51,7 +53,6 @@ def auth_qr():
         result = train_auth_api.auth_qr_get(cookies=cookie_dict)
         assert isinstance(result, dict)
         qr_uuid = result['uuid']
-        qr_img_path = '/tmp/12306/booking/login-qr-%s.jpeg' % uuid.uuid1().hex
 
         if not os.path.exists(os.path.dirname(qr_img_path)):
             os.makedirs(os.path.dirname(qr_img_path))
