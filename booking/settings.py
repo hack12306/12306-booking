@@ -4,6 +4,8 @@ import os
 
 INIT_DONE = False
 
+SLEEP_INTERVAL = 1
+
 COOKIES = {}
 PAY_FILEPATH = './{date}-{order_no}-{bank_id}.html'
 STATION_CODE_MAP = {}

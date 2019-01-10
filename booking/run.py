@@ -4,7 +4,7 @@ run.py
 @author Meng.yangyang
 @description Booking entry point
 @created Tue Jan 08 2019 19:38:32 GMT+0800 (CST)
-@last-modified Thu Jan 10 2019 09:33:44 GMT+0800 (CST)
+@last-modified Thu Jan 10 2019 09:42:01 GMT+0800 (CST)
 """
 
 import os
@@ -152,7 +152,7 @@ def run(train_date, train_name, seat_types, from_station, to_station, pay_channe
             else:
                 assert 'Unkown booking status. %s' % booking_status
 
-            time.sleep(0.6)
+            time.sleep(settings.SLEEP_INTERVAL)
         except TrainUserNotLogin:
             _logger.warn('用户未登录，请重新扫码登录')
             continue
