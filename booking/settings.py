@@ -5,6 +5,7 @@ import logging
 
 INIT_DONE = False
 
+STATION_LIST_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'station_list.json')
 QUERY_LEFT_TICKET_COUNTER_FILE = '/tmp/12306-booking/left_ticket_counter'
 SLEEP_INTERVAL = 0.6
 

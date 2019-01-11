@@ -4,7 +4,7 @@ run.py
 @author Meng.yangyang
 @description Booking entry point
 @created Tue Jan 08 2019 19:38:32 GMT+0800 (CST)
-@last-modified Thu Jan 10 2019 15:54:35 GMT+0800 (CST)
+@last-modified Fri Jan 11 2019 17:49:45 GMT+0800 (CST)
 """
 
 import os
@@ -46,7 +46,17 @@ def initialize():
     if settings.INIT_DONE:
         return
 
-    settings.STATION_CODE_MAP = query_station_code_map()
+    station_list = []
+    station_code_map = {}
+    with open(settings.STATION_LIST_FILE) as f:
+        station_list = json.loads(f.read())
+
+    for station in station_list:
+        station_code_map[station['name']] = station['code']
+
+    settings.STATION_CODE_MAP = station_code_map
+    del station_list
+
     logging.config.dictConfig(settings.LOGGING)
 
     if platform.system() == "Windows":
