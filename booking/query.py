@@ -4,7 +4,7 @@ query.py
 @author Meng.yangyang
 @description 信息查询
 @created Mon Jan 07 2019 16:50:59 GMT+0800 (CST)
-@last-modified Thu Jan 10 2019 10:25:57 GMT+0800 (CST)
+@last-modified Fri Jan 11 2019 18:36:31 GMT+0800 (CST)
 """
 
 import re
@@ -67,7 +67,7 @@ def query_left_tickets(train_date, from_station, to_station, seat_types, train_n
     select_seat_type = None
     for seat_type in seat_types:
         seat_type_left_ticket = train_info.get(seat_type, '')
-        if seat_type_left_ticket and seat_type_left_ticket != u'无':
+        if seat_type_left_ticket and seat_type_left_ticket != u'无' and seat_type_left_ticket != u'*':
             select_seat_type = seat_type
             break
     else:
