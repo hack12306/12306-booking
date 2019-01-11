@@ -15,7 +15,7 @@ setuptools.setup(
     license='MIT',
     url="https://github.com/hack12306/12306-booking",
     packages=setuptools.find_packages(),
-    install_requires=["Pillow>=5.4.1", "hack12306>=0.1.9", "click==7.0"],
+    install_requires=["Pillow>=5.4.1", "hack12306>=0.1.11", "click==7.0"],
     entry_points={
         'console_scripts': [
             '123060-booking=booking.command:booking'
