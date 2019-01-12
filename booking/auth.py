@@ -4,7 +4,7 @@ auth.py
 @author Meng.yangyang
 @description 认证
 @created Mon Jan 07 2019 16:35:01 GMT+0800 (CST)
-@last-modified Fri Jan 11 2019 06:49:23 GMT+0800 (CST)
+@last-modified Sat Jan 12 2019 11:27:34 GMT+0800 (CST)
 """
 
 
@@ -84,15 +84,16 @@ def auth_qr():
 
         uamauth_result = train_auth_api.auth_uamauth(uamtk_result['newapptk'], cookies=cookie_dict)
         _logger.debug('5. auth uamauth result. %s' % json.dumps(uamauth_result, ensure_ascii=False))
+        _logger.info('%s 登录成功。' % uamauth_result['username'].encode('utf8'))
 
         cookies = {
             'tk': uamauth_result['apptk']
         }
         cookies.update(**cookie_dict)
-        user_info_result = TrainUserAPI().user_info(cookies=cookies)
-        _logger.debug('%s login successfully.' % user_info_result['name'])
         _logger.debug('cookies. %s' % json.dumps(cookies, ensure_ascii=False,))
-        _logger.info('%s 登录成功。' % user_info_result['name'].encode('utf8'))
+
+        # user_info_result = TrainUserAPI().user_info(cookies=cookies)
+        # _logger.debug('%s login successfully.' % user_info_result['name'])
 
         return cookies
     finally:
