@@ -4,7 +4,7 @@ pay.py
 @author Meng.yangyang
 @description 支付
 @created Mon Jan 07 2019 17:33:55 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 16:49:44 GMT+0800 (CST)
+@last-modified Sat Jan 12 2019 11:52:22 GMT+0800 (CST)
 """
 
 import os
@@ -24,6 +24,8 @@ from .order import order_no_complete
 from .utils import get_public_ip
 
 _logger = logging.getLogger('booking')
+
+__all__ = ('pay_order', )
 
 
 def pay_order(bank_id=constants.BANK_ID_WX, **kwargs):

@@ -4,7 +4,7 @@ query.py
 @author Meng.yangyang
 @description 信息查询
 @created Mon Jan 07 2019 16:50:59 GMT+0800 (CST)
-@last-modified Sat Jan 12 2019 10:18:11 GMT+0800 (CST)
+@last-modified Sat Jan 12 2019 11:52:49 GMT+0800 (CST)
 """
 
 import re
@@ -19,6 +19,8 @@ from hack12306.constants import SEAT_TYPE_CODE_MAP
 from . import exceptions
 
 _logger = logging.getLogger('booking')
+
+__all__ = ('query_left_tickets', 'query_station_code_map',)
 
 
 def _check_seat_type_is_booking(left_ticket):

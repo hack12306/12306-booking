@@ -4,7 +4,7 @@ auth.py
 @author Meng.yangyang
 @description 认证
 @created Mon Jan 07 2019 16:35:01 GMT+0800 (CST)
-@last-modified Sat Jan 12 2019 11:27:34 GMT+0800 (CST)
+@last-modified Sat Jan 12 2019 11:58:53 GMT+0800 (CST)
 """
 
 
@@ -24,6 +24,16 @@ from . import settings
 
 _logger = logging.getLogger('booking')
 
+__all__ = ('auth_qr', 'auth_reauth', 'auth_is_login')
+
+
+def _uamtk_set(uamtk):
+    settings.AUTH_UAMTK = uamtk
+
+
+def _uamtk_get():
+    return settings.AUTH_UAMTK
+
 
 def auth_is_login(cookies=None):
     """
@@ -35,6 +45,27 @@ def auth_is_login(cookies=None):
     if not result:
         _logger.debug('会话已过期，请重新登录!')
     return result
+
+
+def auth_reauth(uamtk, cookie_dict):
+    """
+    重新认证
+    :param aumtk
+    :param cookie_dict
+    :return JSON对象
+    """
+    assert uamtk is not None
+    assert isinstance(cookie_dict, dict)
+
+    train_auth_api = TrainAuthAPI()
+
+    uamtk_result = train_auth_api.auth_uamtk(uamtk, cookies=cookie_dict)
+    _logger.debug('4. auth uamtk result. %s' % json.dumps(uamtk_result, ensure_ascii=False))
+
+    uamauth_result = train_auth_api.auth_uamauth(uamtk_result['newapptk'], cookies=cookie_dict)
+    _logger.debug('5. auth uamauth result. %s' % json.dumps(uamauth_result, ensure_ascii=False))
+
+    return uamauth_result
 
 
 def auth_qr():
@@ -79,11 +110,8 @@ def auth_qr():
             _logger.error('二维码扫描失败，重新生成二维码')
             raise TrainUserNotLogin('扫描述二维码失败')
 
-        uamtk_result = train_auth_api.auth_uamtk(qr_check_result['uamtk'], cookies=cookie_dict)
-        _logger.debug('4. auth uamtk result. %s' % json.dumps(uamtk_result, ensure_ascii=False))
-
-        uamauth_result = train_auth_api.auth_uamauth(uamtk_result['newapptk'], cookies=cookie_dict)
-        _logger.debug('5. auth uamauth result. %s' % json.dumps(uamauth_result, ensure_ascii=False))
+        _uamtk_set(qr_check_result['uamtk'])
+        uamauth_result = auth_reauth(_uamtk_get(), cookie_dict)
         _logger.info('%s 登录成功。' % uamauth_result['username'].encode('utf8'))
 
         cookies = {

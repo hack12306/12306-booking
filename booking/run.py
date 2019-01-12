@@ -4,7 +4,7 @@ run.py
 @author Meng.yangyang
 @description Booking entry point
 @created Tue Jan 08 2019 19:38:32 GMT+0800 (CST)
-@last-modified Fri Jan 11 2019 18:45:35 GMT+0800 (CST)
+@last-modified Sat Jan 12 2019 12:07:17 GMT+0800 (CST)
 """
 
 import os
@@ -20,12 +20,14 @@ from hack12306.exceptions import TrainUserNotLogin, TrainBaseException
 from . import settings
 from . import exceptions
 from .pay import pay_order
-from .auth import auth_qr, auth_is_login
 from .user import user_passengers
+from .auth import auth_qr, auth_is_login, auth_reauth
 from .order import order_submit, order_check_no_complete
 from .query import query_left_tickets, query_station_code_map
 
 _logger = logging.getLogger('booking')
+
+__all__ = ('initialize', 'run')
 
 
 BOOKING_STATUS_QUERY_LEFT_TICKET = 2
@@ -113,12 +115,22 @@ def run(train_date, train_names, seat_types, from_station, to_station, pay_chann
     booking_status = BOOKING_STATUS_QUERY_LEFT_TICKET
     left_ticket_counter = _query_left_ticket_counter_get()
 
+    last_auth_time = int(time.time())
+
     while True:
         try:
             # auth
             if not settings.COOKIES or not auth_is_login(settings.COOKIES):
                 cookies = auth_qr()
                 settings.COOKIES = cookies
+
+            # reauth
+            if settings.AUTH_UAMTK and settings.COOKIES:
+                if int(time.time()) - last_auth_time >= settings.AUTH_REAUTH_INTERVAL:
+                    uamauth_result = auth_reauth(settings.AUTH_UAMTK, settings.COOKIES)
+                    settings.COOKIES.update(tk=uamauth_result['apptk'])
+                    last_auth_time = int(time.time())
+                    _logger.info('%s 重新认证成功' % uamauth_result['username'].encode('utf8'))
 
             # check passengers
             if not check_passengers:
