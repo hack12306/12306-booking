@@ -4,7 +4,7 @@ query.py
 @author Meng.yangyang
 @description 信息查询
 @created Mon Jan 07 2019 16:50:59 GMT+0800 (CST)
-@last-modified Fri Jan 11 2019 18:36:31 GMT+0800 (CST)
+@last-modified Sat Jan 12 2019 10:18:11 GMT+0800 (CST)
 """
 
 import re
@@ -21,14 +21,65 @@ from . import exceptions
 _logger = logging.getLogger('booking')
 
 
-def query_left_tickets(train_date, from_station, to_station, seat_types, train_name=None):
+def _check_seat_type_is_booking(left_ticket):
+    if left_ticket and left_ticket != u'无' and left_ticket != u'*':
+        return True
+    else:
+        return False
+
+
+def _select_train_and_seat_type(train_names, seat_types, query_trains):
+    """
+    选择订票车次、席别
+    :param train_names 预定的车次列表
+    :param seat_types 预定席别列表
+    :param query_trains 查询到火车车次列表
+    :return select_train, select_seat_type
+    """
+    def _select_trains(query_trains, train_names=None):
+        if train_names:
+            select_trains = []
+            # 根据订票车次次序，选择车次
+            for train_name in train_names:
+                for train in query_trains:
+                    if train['train_name'] == train_name:
+                        select_trains.append(copy.deepcopy(train))
+            return select_trains
+        else:
+            return query_trains
+
+    def _select_types(trains, seat_types):
+        select_train = None
+        select_seat_type = None
+
+        for train in trains:
+            for seat_type in seat_types:
+                seat_type_left_ticket = train.get(seat_type, '')
+                if _check_seat_type_is_booking(seat_type_left_ticket):
+                    select_seat_type = seat_type
+                    select_train = copy.deepcopy(train)
+                    return select_train, select_seat_type
+        else:
+            return None, None
+
+    _logger.debug('train_names:%s seat_types:%s' % (json.dumps(train_names, ensure_ascii=False),
+                                                    json.dumps(seat_types, ensure_ascii=False)))
+    trains = _select_trains(query_trains, train_names)
+    # debug trains
+    for i in range(min(len(trains), len(train_names or ['']))):
+        _logger.debug('query left tickets train info. %s' % json.dumps(trains[i], ensure_ascii=False))
+
+    return _select_types(trains, seat_types)
+
+
+def query_left_tickets(train_date, from_station, to_station, seat_types, train_names=None):
     """
     信息查询-剩余车票
     :param train_date
     :param from_station
     :param to_station
     :param seat_types
-    :param train_name
+    :param train_names
     :return JSON 对象
     """
     date_pattern = re.compile(r'^\d{4}-\d{2}-\d{2}$')
@@ -41,37 +92,12 @@ def query_left_tickets(train_date, from_station, to_station, seat_types, train_n
     train_info = {}
 
     trains = TrainInfoQueryAPI().info_query_left_tickets(train_date, from_station, to_station)
-    # _logger.debug('query left tickets. %s' % json.dumps(trains, ensure_ascii=False))
-    if train_name:
-        for train in trains:
-            if train['train_name'] == train_name:
-                train_info = copy.deepcopy(train)
-                break
-        else:
-            raise exceptions.BookingTrainNoLeftTicket()
-    else:
-        # TODO Optimize multiple trains select type
-        for train in trains:
-            for seat_type in seat_types:
-                if train.get(seat_type, ''):
-                    train_info = copy.deepcopy(train)
-                    break
-        else:
-            raise exceptions.BookingTrainNoLeftTicket()
+    train_info, select_seat_type = _select_train_and_seat_type(train_names, seat_types, trains)
 
-    if not  train_info:
+    if not train_info or not select_seat_type:
         raise exceptions.BookingTrainNoLeftTicket()
 
-    _logger.debug('query left tickets train info. %s' % json.dumps(train_info, ensure_ascii=False))
-
-    select_seat_type = None
-    for seat_type in seat_types:
-        seat_type_left_ticket = train_info.get(seat_type, '')
-        if seat_type_left_ticket and seat_type_left_ticket != u'无' and seat_type_left_ticket != u'*':
-            select_seat_type = seat_type
-            break
-    else:
-        raise exceptions.BookingTrainNoLeftTicket()
+    _logger.debug('select train info. %s' % json.dumps(train_info, ensure_ascii=False))
 
     result = {
         'train_date': train_date,

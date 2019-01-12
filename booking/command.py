@@ -5,7 +5,7 @@ command.py
 @author Meng.yangyang
 @description 
 @created Tue Jan 08 2019 23:39:26 GMT+0800 (CST)
-@last-modified Wed Jan 09 2019 22:55:30 GMT+0800 (CST)
+@last-modified Fri Jan 11 2019 18:45:16 GMT+0800 (CST)
 """
 
 import re
@@ -24,13 +24,13 @@ _logger = logging.getLogger('booking')
 
 @click.command()
 @click.option('--train-date', required=True, help=u'乘车日期，格式：YYYY-mm-dd')
-@click.option('--train-name', required=True, help=u'车次')
+@click.option('--train-names', required=True, help=u'车次')
 @click.option('--seat-types', required=True, help=u'座位席别， 例如：硬卧,硬座')
 @click.option('--from-station', required=True, help=u'始发站')
 @click.option('--to-station', required=True, help=u'到达站')
 @click.option('--pay-channel', type=click.Choice(['微信', '支付宝']), default='微信', help=u'支付通道，微信，支付宝')
 @click.option('--passengers', help='乘客，例如：任正非,王石')
-def booking(train_date, train_name, seat_types, from_station, to_station, pay_channel, passengers):
+def booking(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers):
     initialize()
 
     date_pattern = re.compile(r'^\d{4}-\d{2}-\d{2}$')
@@ -39,6 +39,8 @@ def booking(train_date, train_name, seat_types, from_station, to_station, pay_ch
     today = datetime.date.today()
     train_date_time = datetime.datetime.strptime(train_date, '%Y-%m-%d').date()
     assert train_date_time >= today, u'无效的乘车日期，乘车日期必须大于今天. %s' % train_date
+
+    train_names = train_names.split(',')
 
     assert check_seat_types(seat_types.split(',')), u'无效的座席. %s' % seat_types
     seat_types = seat_types.split(',')
@@ -61,6 +63,8 @@ def booking(train_date, train_name, seat_types, from_station, to_station, pay_ch
         passengers = passengers.split(',')
 
     _logger.info(u'订票信息。乘车日期：%s 车次：%s 座席：%s 始发站:%s to_station:%s 支付通道：%s' %
-                 (train_date, train_name, json.dumps(seat_types, ensure_ascii=False), from_station, to_station, pay_channel))
+                 (train_date, json.dumps(train_names, ensure_ascii=False),
+                  json.dumps(seat_types, ensure_ascii=False),
+                  from_station, to_station, pay_channel))
 
-    booking_run_loop(train_date, train_name, seat_types, from_station, to_station, pay_channel, passengers=passengers)
+    booking_run_loop(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers=passengers)

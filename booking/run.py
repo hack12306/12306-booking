@@ -4,7 +4,7 @@ run.py
 @author Meng.yangyang
 @description Booking entry point
 @created Tue Jan 08 2019 19:38:32 GMT+0800 (CST)
-@last-modified Fri Jan 11 2019 17:49:45 GMT+0800 (CST)
+@last-modified Fri Jan 11 2019 18:45:35 GMT+0800 (CST)
 """
 
 import os
@@ -88,7 +88,7 @@ def _query_left_ticket_counter_set(counter):
         f.write(str(counter))
 
 
-def run(train_date, train_name, seat_types, from_station, to_station, pay_channel=BANK_ID_WX, passengers=None, **kwargs):
+def run(train_date, train_names, seat_types, from_station, to_station, pay_channel=BANK_ID_WX, passengers=None, **kwargs):
     """
     Booking entry point.
     """
@@ -156,7 +156,7 @@ def run(train_date, train_name, seat_types, from_station, to_station, pay_channe
                     _query_left_ticket_counter_set(left_ticket_counter)
 
                 _logger.info('查询余票, 已查询%s次!' % left_ticket_counter)
-                train_info = query_left_tickets(train_date, from_station, to_station, seat_types, train_name)
+                train_info = query_left_tickets(train_date, from_station, to_station, seat_types, train_names)
                 booking_status = BOOKING_STATUS_ORDER_SUBMIT
 
             # subit order
