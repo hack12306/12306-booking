@@ -4,7 +4,6 @@ exceptions.py
 @author Meng.yangyang
 @description 异常
 @created Mon Jan 07 2019 17:48:48 GMT+0800 (CST)
-@last-modified Thu Jan 10 2019 09:26:13 GMT+0800 (CST)
 """
 
 

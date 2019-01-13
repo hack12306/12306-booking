@@ -4,7 +4,6 @@ pay.py
 @author Meng.yangyang
 @description 支付
 @created Mon Jan 07 2019 17:33:55 GMT+0800 (CST)
-@last-modified Sat Jan 12 2019 11:52:22 GMT+0800 (CST)
 """
 
 import os

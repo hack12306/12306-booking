@@ -4,7 +4,6 @@ run.py
 @author Meng.yangyang
 @description Booking entry point
 @created Tue Jan 08 2019 19:38:32 GMT+0800 (CST)
-@last-modified Sat Jan 12 2019 12:07:17 GMT+0800 (CST)
 """
 
 import os

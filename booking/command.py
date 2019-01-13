@@ -5,7 +5,6 @@ command.py
 @author Meng.yangyang
 @description 
 @created Tue Jan 08 2019 23:39:26 GMT+0800 (CST)
-@last-modified Fri Jan 11 2019 18:45:16 GMT+0800 (CST)
 """
 
 import re

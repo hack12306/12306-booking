@@ -5,7 +5,6 @@ _logging.py
 @author Meng.yangyang
 @description 
 @created Thu Jan 10 2019 10:14:02 GMT+0800 (CST)
-@last-modified Thu Jan 10 2019 10:26:46 GMT+0800 (CST)
 """
 
 import logging

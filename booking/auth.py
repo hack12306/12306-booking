@@ -4,7 +4,6 @@ auth.py
 @author Meng.yangyang
 @description 认证
 @created Mon Jan 07 2019 16:35:01 GMT+0800 (CST)
-@last-modified Sat Jan 12 2019 11:58:53 GMT+0800 (CST)
 """
 
 
