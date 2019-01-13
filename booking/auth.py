@@ -95,7 +95,7 @@ def auth_qr():
         os.system(cmd)
 
         _logger.debug('3. auth check qr')
-        for _ in range(6):
+        for _ in range(30):
             _logger.info('请扫描二维码登录！')
             qr_check_result = train_auth_api.auth_qr_check(qr_uuid, cookies=cookie_dict)
             _logger.debug('check qr result. %s' % json.dumps(qr_check_result, ensure_ascii=False))
@@ -104,7 +104,7 @@ def auth_qr():
                 _logger.info('二维码扫描成功！')
                 break
 
-            time.sleep(3)
+            time.sleep(1)
         else:
             _logger.error('二维码扫描失败，重新生成二维码')
             raise TrainUserNotLogin('扫描述二维码失败')
