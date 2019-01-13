@@ -119,12 +119,13 @@ def run(train_date, train_names, seat_types, from_station, to_station, pay_chann
     while True:
         try:
             # auth
-            if not settings.COOKIES or not auth_is_login(settings.COOKIES):
+            if booking_status != BOOKING_STATUS_QUERY_LEFT_TICKET and(
+                    not settings.COOKIES or not auth_is_login(settings.COOKIES)):
                 cookies = auth_qr()
                 settings.COOKIES = cookies
 
             # reauth
-            if settings.AUTH_UAMTK and settings.COOKIES:
+            if booking_status != BOOKING_STATUS_QUERY_LEFT_TICKET and settings.AUTH_UAMTK and settings.COOKIES:
                 if int(time.time()) - last_auth_time >= settings.AUTH_REAUTH_INTERVAL:
                     uamauth_result = auth_reauth(settings.AUTH_UAMTK, settings.COOKIES)
                     settings.COOKIES.update(tk=uamauth_result['apptk'])
@@ -132,7 +133,7 @@ def run(train_date, train_names, seat_types, from_station, to_station, pay_chann
                     _logger.info('%s 重新认证成功' % uamauth_result['username'].encode('utf8'))
 
             # check passengers
-            if not check_passengers:
+            if booking_status != BOOKING_STATUS_QUERY_LEFT_TICKET and not check_passengers:
                 passenger_infos = user_passengers()
                 if passengers:
                     passenger_name_id_map = {}
@@ -155,7 +156,7 @@ def run(train_date, train_names, seat_types, from_station, to_station, pay_chann
                 check_passengers = True
 
             # order not complete
-            if order_check_no_complete():
+            if booking_status != BOOKING_STATUS_QUERY_LEFT_TICKET and order_check_no_complete():
                 booking_status = BOOKING_STATUS_PAY_ORDER
 
             _logger.debug('booking status. %s' % dict(BOOKING_STATUS_MAP).get(booking_status, '未知状态'))

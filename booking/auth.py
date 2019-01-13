@@ -95,7 +95,7 @@ def auth_qr():
         os.system(cmd)
 
         _logger.debug('3. auth check qr')
-        for _ in range(30):
+        for _ in range(15):
             _logger.info('请扫描二维码登录！')
             qr_check_result = train_auth_api.auth_qr_check(qr_uuid, cookies=cookie_dict)
             _logger.debug('check qr result. %s' % json.dumps(qr_check_result, ensure_ascii=False))
