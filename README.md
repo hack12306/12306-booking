@@ -21,13 +21,13 @@
 ```sh
 pip install 12306-booking -U --user;
 ```
->如果使用MacOS，使用虚拟安装`virtualenv venv; source venv/bin/activate; pip install 12306-booking -U`
+>如果使用MacOS，使用虚拟环境安装`virtualenv venv; source venv/bin/activate; pip install 12306-booking -U`
 
 订票
 ```sh
 123060-booking --train-date 2020-01-01 --train-name K571 --seat-types 硬卧 --from-station 北京 --to-station 麻城 --pay-channel 微信 --passengers 任正非,王石
 ```
-> passengers如果有多个乘客，乘客之间用英文','分割
+> 多车次，多席别，多乘客之间用英文的','分割
 
 ## 订票流程
 
