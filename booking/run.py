@@ -81,10 +81,8 @@ def _query_left_ticket_counter_get():
         return int(counter)
 
 
-def _query_left_ticket_counter_set(counter):
-    if not os.path.exists(settings.QUERY_LEFT_TICKET_COUNTER_FILE):
-        os.makedirs(os.path.dirname(settings.QUERY_LEFT_TICKET_COUNTER_FILE))
-
+def _query_left_ticket_counter_inc():
+    counter = _query_left_ticket_counter_get() + 1
     with open(settings.QUERY_LEFT_TICKET_COUNTER_FILE, 'w') as f:
         f.write(str(counter))
 
@@ -112,7 +110,6 @@ def run(train_date, train_names, seat_types, from_station, to_station, pay_chann
     check_passengers = False
     passenger_id_nos = []
     booking_status = BOOKING_STATUS_QUERY_LEFT_TICKET
-    left_ticket_counter = _query_left_ticket_counter_get()
 
     last_auth_time = int(time.time())
 
@@ -163,11 +160,8 @@ def run(train_date, train_names, seat_types, from_station, to_station, pay_chann
 
             # query left tickets
             if booking_status == BOOKING_STATUS_QUERY_LEFT_TICKET:
-                left_ticket_counter += 1
-                if left_ticket_counter % 10 == 0:
-                    _query_left_ticket_counter_set(left_ticket_counter)
-
-                _logger.info('查询余票, 已查询%s次!' % left_ticket_counter)
+                _query_left_ticket_counter_inc()
+                _logger.info('查询余票, 已查询%s次!' % _query_left_ticket_counter_get())
                 train_info = query_left_tickets(train_date, from_station, to_station, seat_types, train_names)
                 booking_status = BOOKING_STATUS_ORDER_SUBMIT
 
