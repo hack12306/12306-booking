@@ -38,5 +38,5 @@ class BookingOrderCancelExceedLimit(BookingBaseException):
 
 class BookingSubmitOrderError(BookingBaseException):
     """
-    提交订单是吧
+    提交订单失败
     """
