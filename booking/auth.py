@@ -13,7 +13,6 @@ import uuid
 import json
 import base64
 import logging
-from PIL import Image
 
 from hack12306.auth import TrainAuthAPI
 from hack12306.user import TrainUserAPI
