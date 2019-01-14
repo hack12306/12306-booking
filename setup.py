@@ -17,6 +17,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data = True,
     package_data = {'': 'booking/station_list.json'},
+    # install_requires=["Pillow>=5.4.1", "hack12306>=0.1.11", "click==7.0", "six>=1.12.0"],
     install_requires=["Pillow>=5.4.1", "hack12306>=0.1.11", "click==7.0", "six>=1.12.0"],
     entry_points={
         'console_scripts': [
