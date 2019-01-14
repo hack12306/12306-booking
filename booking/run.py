@@ -10,6 +10,7 @@ import os
 import re
 import time
 import json
+import fcntl
 import logging
 import platform
 import logging.config
@@ -77,7 +78,11 @@ def _query_left_ticket_counter_get():
         return 0
 
     with open(settings.QUERY_LEFT_TICKET_COUNTER_FILE) as f:
-        counter = f.read() or '0'
+        flag = fcntl.fcntl(f.fileno(), fcntl.F_GETFD)
+        fcntl.fcntl(f, fcntl.F_SETFD, flag | os.O_NONBLOCK)
+        flag = fcntl.fcntl(f, fcntl.F_GETFD)
+
+        counter = f.read()
         return int(counter)
 
 
