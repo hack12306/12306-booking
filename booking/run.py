@@ -88,6 +88,10 @@ def _query_left_ticket_counter_get():
 
 def _query_left_ticket_counter_inc():
     counter = _query_left_ticket_counter_get() + 1
+
+    if not os.path.exists(settings.QUERY_LEFT_TICKET_COUNTER_FILE):
+        os.makedirs(os.path.dirname(settings.QUERY_LEFT_TICKET_COUNTER_FILE))
+
     with open(settings.QUERY_LEFT_TICKET_COUNTER_FILE, 'w') as f:
         f.write(str(counter))
 
