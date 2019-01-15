@@ -9,7 +9,7 @@ setuptools.setup(
     version="0.1.12",
     author="Meng.yangyang",
     author_email="mengyy_linux@163.com",
-    description="12306 booking tool",
+    description="12306 booking assistant",
     long_description=long_description,
     long_description_content_type="text/markdown",
     license='MIT',
