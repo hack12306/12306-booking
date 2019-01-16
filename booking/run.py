@@ -207,6 +207,9 @@ def run(train_date, train_names, seat_types, from_station, to_station, pay_chann
             _logger.error(e)
             _logger.exception(e)
 
+        except exceptions.BookingTrainNoLeftTicket as e:
+            _logger.debug(e)
+
         except Exception as e:
             if isinstance(e, AssertionError):
                 _logger.exception(e)

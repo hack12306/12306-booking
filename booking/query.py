@@ -96,7 +96,7 @@ def query_left_tickets(train_date, from_station, to_station, seat_types, train_n
     train_info, select_seat_type = _select_train_and_seat_type(train_names, seat_types, trains)
 
     if not train_info or not select_seat_type:
-        raise exceptions.BookingTrainNoLeftTicket()
+        raise exceptions.BookingTrainNoLeftTicket('无票')
 
     _logger.debug('select train info. %s' % json.dumps(train_info, ensure_ascii=False))
 
