@@ -24,6 +24,7 @@ from .user import user_passengers
 from .auth import auth_qr, auth_is_login, auth_reauth
 from .order import order_submit, order_check_no_complete
 from .query import query_left_tickets, query_station_code_map
+from .remind import remind_left_ticket
 
 _logger = logging.getLogger('booking')
 
@@ -173,6 +174,7 @@ def run(train_date, train_names, seat_types, from_station, to_station, pay_chann
                 _logger.info('查询余票, 已查询%s次!' % _query_left_ticket_counter_get())
                 train_info = query_left_tickets(train_date, from_station, to_station, seat_types, train_names)
                 booking_status = BOOKING_STATUS_ORDER_SUBMIT
+                remind_left_ticket()
 
             # subit order
             elif booking_status == BOOKING_STATUS_ORDER_SUBMIT:

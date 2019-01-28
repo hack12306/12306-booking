@@ -22,6 +22,8 @@ CHROME_APP_OPEN_CMD_LINUX = None    # TODO Linux Chrome 打开文件cmd
 CHROME_APP_OPEN_CMD_WINDOWS = None  # TODO Windows Chrome 打开文件cmd
 CHROME_APP_OPEN_CMD = CHROME_APP_OPEN_CMD_MacOS
 
+TRAIN_AUTIO_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'train.mp3')
+
 LOGGING = {
     'version': 1,
     'formatters': {
