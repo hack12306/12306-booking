@@ -19,10 +19,29 @@ from hack12306.user import TrainUserAPI
 from hack12306.exceptions import TrainUserNotLogin
 
 from . import settings
+from .remind import remind_login_qr
 
 _logger = logging.getLogger('booking')
 
 __all__ = ('auth_qr', 'auth_reauth', 'auth_is_login')
+
+
+LOGIN_QR_HTML_TPL = """
+<html>
+    <head>
+        <title>12306-booking 扫码登录</title>
+        <meta charset="utf8">
+    </head>
+    <body>
+        <h1>12306订票助手</h1>
+        <img src="{filepath}", alt="12306登录二维码"><br>
+        <b>请用12306 APP 扫码二维码登录</b>
+    </body>
+    <script>
+        setTimeout("window.close()", 30000)
+    </script>
+</html>
+"""
 
 
 def _uamtk_set(uamtk):
@@ -72,6 +91,7 @@ def auth_qr():
     """
     try:
         qr_img_path = '/tmp/12306/booking/login-qr-%s.jpeg' % uuid.uuid1().hex
+        login_html_path = '/tmp/12306/booking/login-qr-%s.html' % uuid.uuid1().hex
 
         train_auth_api = TrainAuthAPI()
 
@@ -89,13 +109,17 @@ def auth_qr():
         with open(qr_img_path, 'wb') as f:
             f.write(base64.b64decode(result['image']))
 
+        with open(login_html_path, 'w+') as f:
+            f.write(LOGIN_QR_HTML_TPL.format(filepath=qr_img_path))
+
         # open qr image with browser
-        cmd = settings.CHROME_APP_OPEN_CMD.format(filepath=qr_img_path)
+        cmd = 'open %s' % login_html_path
         os.system(cmd)
 
         _logger.debug('3. auth check qr')
-        for _ in range(15):
+        for _ in range(10):
             _logger.info('请扫描二维码登录！')
+            remind_login_qr()
             qr_check_result = train_auth_api.auth_qr_check(qr_uuid, cookies=cookie_dict)
             _logger.debug('check qr result. %s' % json.dumps(qr_check_result, ensure_ascii=False))
             if qr_check_result['result_code'] == "2":
@@ -103,7 +127,7 @@ def auth_qr():
                 _logger.info('二维码扫描成功！')
                 break
 
-            time.sleep(1)
+            time.sleep(3)
         else:
             _logger.error('二维码扫描失败，重新生成二维码')
             raise TrainUserNotLogin('扫描述二维码失败')
@@ -125,3 +149,6 @@ def auth_qr():
     finally:
         if os.path.exists(qr_img_path):
             os.remove(qr_img_path)
+
+        if os.path.exists(login_html_path):
+            os.remove(login_html_path)

@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 .vscode
 *.sh
+.DS_Store

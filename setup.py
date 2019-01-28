@@ -15,9 +15,8 @@ setuptools.setup(
     license='MIT',
     url="https://github.com/hack12306/12306-booking",
     packages=setuptools.find_packages(include=['booking']),
-    include_package_data = True,
-    package_data={'': ['station_list.json', 'train.mp3']},
-    # install_requires=["Pillow>=5.4.1", "hack12306>=0.1.11", "click==7.0", "six>=1.12.0"],
+    # include_package_data = True,
+    package_data={'': ['station_list.json', 'train.mp3', 'login.wav', '*.html']},
     install_requires=["hack12306>=0.1.11", "click==7.0", "six>=1.12.0"],
     entry_points={
         'console_scripts': [
