@@ -69,7 +69,6 @@ def do_booking(train_date, train_names, seat_types, from_station, to_station, pa
     booking_run_loop(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers=passengers)
 
 
-
 @cli.command('booking')
 @click.option('--train-date', required=True, help=u'乘车日期，格式：YYYY-mm-dd')
 @click.option('--train-names', required=True, help=u'车次')
@@ -112,7 +111,15 @@ def query_train(train_code):
         pt.add_row([station['train_code'], station['station_no'], station['station_name'], station['arrive_time'][:5],
                     station['start_time'][:5], station['stopover_time'], duration_time])
 
-    print '始发站: %s, 目的站:%s\n' % (train_schedule[0]['station_name'].encode('utf8'), train_schedule[-1]['station_name'].encode('utf8'))
+    print '%s车次，%s从【%s】出发，运行%s, %s到达【%s】' % (
+        train_code,
+        train_schedule[0]['start_time'][:5].encode('utf8'),
+        train_schedule[0]['station_name'].encode('utf8'),
+        time_to_str(train_schedule[-1]['duration_time']),
+        train_schedule[-1]['start_time'][:5].encode('utf8'),
+        train_schedule[-1]['station_name'].encode('utf8'))
+
+    print '途径车站列表：'
     print pt
 
 
