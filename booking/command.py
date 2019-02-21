@@ -152,7 +152,20 @@ def query_left_ticket(from_station, to_station, date):
         date = (datetime.date.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
 
     trains = TrainInfoQueryAPI().info_query_left_tickets(date, from_station, to_station)
-    print json.dumps(trains, ensure_ascii=False)
+
+    pt = prettytable.PrettyTable(
+        field_names=['车次', '始发站', '目的站', '运行时间', '发车时间', '到达时间',
+                     '商务座', '一等座', '二等座', '软卧', '硬卧', '软座', '硬座', '无座', '备注'],
+        border=True, hrules=prettytable.ALL)
+
+    for train in trains:
+        pt.add_row([train['train_name'], train['from_station'], train['to_station'],
+                    train['duration'], train['departure_time'], train['arrival_time'],
+                    train[u'商务座'] or '--', train[u'一等座'] or '--', train[u'二等座'] or '--',
+                    train[u'软卧'] or '--', train[u'硬卧'] or '---', train[u'软座'] or '--',
+                    train[u'硬座'] or '--', train[u'无座'] or '--', train[u'remark'] or '--'])
+
+    print pt
 
 
 @click.command('booking')
