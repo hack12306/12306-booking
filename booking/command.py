@@ -12,24 +12,24 @@ import json
 import click
 import logging
 import datetime
+import requests
+import prettytable
 
 from .run import initialize, run as booking_run_loop
-from .utils import check_seat_types
+from .utils import check_seat_types, time_to_str
 from .query import query_station_code_map
 from hack12306.constants import BANK_ID_WX, BANK_ID_ALIPAY
+from hack12306.query import TrainInfoQueryAPI
 
 _logger = logging.getLogger('booking')
 
 
-@click.command()
-@click.option('--train-date', required=True, help=u'乘车日期，格式：YYYY-mm-dd')
-@click.option('--train-names', required=True, help=u'车次')
-@click.option('--seat-types', required=True, help=u'座位席别， 例如：硬卧,硬座')
-@click.option('--from-station', required=True, help=u'始发站')
-@click.option('--to-station', required=True, help=u'到达站')
-@click.option('--pay-channel', type=click.Choice(['微信', '支付宝']), default='微信', help=u'支付通道，微信，支付宝')
-@click.option('--passengers', help='乘客，例如：任正非,王石')
-def booking(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers):
+@click.group()
+def cli():
+    pass
+
+
+def do_booking(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers):
     initialize()
 
     date_pattern = re.compile(r'^\d{4}-\d{2}-\d{2}$')
@@ -67,3 +67,97 @@ def booking(train_date, train_names, seat_types, from_station, to_station, pay_c
                   from_station, to_station, pay_channel))
 
     booking_run_loop(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers=passengers)
+
+
+
+@cli.command('booking')
+@click.option('--train-date', required=True, help=u'乘车日期，格式：YYYY-mm-dd')
+@click.option('--train-names', required=True, help=u'车次')
+@click.option('--seat-types', required=True, help=u'座位席别， 例如：硬卧,硬座')
+@click.option('--from-station', required=True, help=u'始发站')
+@click.option('--to-station', required=True, help=u'到达站')
+@click.option('--pay-channel', type=click.Choice(['微信', '支付宝']), default='微信', help=u'支付通道，微信，支付宝')
+@click.option('--passengers', help='乘客，例如：任正非,王石')
+def booking_sub_cmd(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers):
+    """
+    定火车票
+    """
+    do_booking(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers)
+
+
+@cli.command('qtrain')
+@click.argument('train-code', metavar=u'<车次>')
+def query_train(train_code):
+    """
+    查询车次
+    """
+    def _query_train_code(train_code):
+        resp = requests.get('http://trip.kdreader.com/api/v1/train/%s/' % train_code)
+        return json.loads(resp.content)
+
+    def _query_train_schedule(train_code):
+        resp = requests.get('http://trip.kdreader.com/api/v1/train/schedule/%s/' % train_code)
+        return json.loads(resp.content)
+
+    train_code = train_code.encode('utf8')
+    # train_info = _query_train_code(train_code)
+    train_schedule = _query_train_schedule(train_code)
+
+    pt = prettytable.PrettyTable(
+        field_names=['车次', '站次', '站名', '到达时间', '开车时间', '停车时间', '运行时间'],
+        border=True, hrules=prettytable.ALL)
+
+    for station in train_schedule:
+        duration_time = time_to_str(station['duration_time'])
+        pt.add_row([station['train_code'], station['station_no'], station['station_name'], station['arrive_time'][:5],
+                    station['start_time'][:5], station['stopover_time'], duration_time])
+
+    print '始发站: %s, 目的站:%s\n' % (train_schedule[0]['station_name'].encode('utf8'), train_schedule[-1]['station_name'].encode('utf8'))
+    print pt
+
+
+@cli.command('qticket')
+@click.option('--date', help=u'乘车日期，格式：YYYY-mm-dd')
+@click.argument('from_station', metavar=u'<始发站>')
+@click.argument('to_station', metavar=u'<终点站>')
+def query_left_ticket(from_station, to_station, date):
+    """
+    查询余票
+    """
+    print '正在查询【%s】到【%s】的车票信息，请稍等...' % (from_station.encode('utf8'), to_station.encode('utf8'))
+
+    station_code_map = query_station_code_map()
+    if from_station not in station_code_map.keys():
+        print '未找到【%s】车站' % from_station
+        return
+
+    from_station = station_code_map[from_station]
+    if to_station not in station_code_map.keys():
+        print u'未找到【%s】车站' % to_station
+        return
+
+    to_station = station_code_map[to_station]
+
+    if date:
+        date_pattern = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+        assert date_pattern.match(date), '乘车日期无效. %s' % date
+    else:
+        date = (datetime.date.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+
+    trains = TrainInfoQueryAPI().info_query_left_tickets(date, from_station, to_station)
+    print json.dumps(trains, ensure_ascii=False)
+
+
+@click.command('booking')
+@click.option('--train-date', required=True, help=u'乘车日期，格式：YYYY-mm-dd')
+@click.option('--train-names', required=True, help=u'车次')
+@click.option('--seat-types', required=True, help=u'座位席别， 例如：硬卧,硬座')
+@click.option('--from-station', required=True, help=u'始发站')
+@click.option('--to-station', required=True, help=u'到达站')
+@click.option('--pay-channel', type=click.Choice(['微信', '支付宝']), default='微信', help=u'支付通道，微信，支付宝')
+@click.option('--passengers', help='乘客，例如：任正非,王石')
+def booking(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers):
+    """
+    定火车票
+    """
+    do_booking(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers)

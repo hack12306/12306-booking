@@ -17,10 +17,11 @@ setuptools.setup(
     packages=setuptools.find_packages(include=['booking']),
     # include_package_data = True,
     package_data={'': ['station_list.json', 'train.mp3', 'login.wav', '*.html']},
-    install_requires=["hack12306>=0.1.11", "click==7.0", "six>=1.12.0"],
+    install_requires=["hack12306>=0.1.15", "click==7.0", "six>=1.12.0", "prettytable==0.7.2"],
     entry_points={
         'console_scripts': [
-            '12306-booking=booking.command:booking'
+            '12306-booking=booking.command:booking',
+            '12306=booking.command:cli',
         ]
     },
     classifiers=[

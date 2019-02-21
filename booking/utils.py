@@ -67,3 +67,24 @@ def check_seat_types(seat_types):
     if not frozenset(seat_types) <= frozenset(dict(SEAT_TYPE_CODE_MAP).keys()):
         return False
     return True
+
+
+def time_to_str(tm_sec, inc_seconds=False):
+    days = tm_sec / (3600*12)
+    hours = (tm_sec % (3600*12)) / 3600
+    mins = (tm_sec % (3600*12)) % 3600 / 60
+    seconds = tm_sec % 60
+
+    msg = ''
+    if days:
+        msg += '%s天' % days
+
+    if hours:
+        msg += '%s小时' % hours
+
+    if mins:
+        msg += '%s分钟' % mins
+
+    if seconds:
+        msg += '%s秒' % seconds
+    return msg
