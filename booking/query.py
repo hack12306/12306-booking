@@ -128,3 +128,17 @@ def query_station_code_map():
         station_code_map[station['name']] = station['code']
 
     return station_code_map
+
+
+def query_code_station_map():
+    """
+    信息查询-查询车站编码列表
+    :return JSON对象
+    """
+    code_station_map = {}
+
+    stations = TrainInfoQueryAPI().info_query_station_list()
+    for station in stations:
+        code_station_map[station['code']] = station['name']
+
+    return code_station_map

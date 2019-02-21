@@ -17,7 +17,7 @@ import prettytable
 
 from .run import initialize, run as booking_run_loop
 from .utils import check_seat_types, time_to_str
-from .query import query_station_code_map
+from .query import query_station_code_map, query_code_station_map
 from hack12306.constants import BANK_ID_WX, BANK_ID_ALIPAY
 from hack12306.query import TrainInfoQueryAPI
 
@@ -104,7 +104,7 @@ def query_train(train_code):
 
     pt = prettytable.PrettyTable(
         field_names=['车次', '站次', '站名', '到达时间', '开车时间', '停车时间', '运行时间'],
-        border=True, hrules=prettytable.ALL)
+        border=True,)
 
     for station in train_schedule:
         duration_time = time_to_str(station['duration_time'])
@@ -151,15 +151,27 @@ def query_left_ticket(from_station, to_station, date):
     else:
         date = (datetime.date.today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
 
-    trains = TrainInfoQueryAPI().info_query_left_tickets(date, from_station, to_station)
+    try_times = 3
+    while try_times > 0:
+        try:
+            trains = TrainInfoQueryAPI().info_query_left_tickets(date, from_station, to_station)
+        except Exception as e:
+            continue
+
+        try_times -= 1
+    else:
+        print '网络请求失败，请重试...'
 
     pt = prettytable.PrettyTable(
         field_names=['车次', '始发站', '目的站', '运行时间', '发车时间', '到达时间',
                      '商务座', '一等座', '二等座', '软卧', '硬卧', '软座', '硬座', '无座', '备注'],
-        border=True, hrules=prettytable.ALL)
+        border=True)
 
+    code_station_map = query_code_station_map()
     for train in trains:
-        pt.add_row([train['train_name'], train['from_station'], train['to_station'],
+        from_station = code_station_map[train['from_station']]
+        to_station = code_station_map[train['to_station']]
+        pt.add_row([train['train_name'], from_station, to_station,
                     train['duration'], train['departure_time'], train['arrival_time'],
                     train[u'商务座'] or '--', train[u'一等座'] or '--', train[u'二等座'] or '--',
                     train[u'软卧'] or '--', train[u'硬卧'] or '---', train[u'软座'] or '--',
