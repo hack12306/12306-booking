@@ -155,12 +155,13 @@ def query_left_ticket(from_station, to_station, date):
     while try_times > 0:
         try:
             trains = TrainInfoQueryAPI().info_query_left_tickets(date, from_station, to_station)
+            break
         except Exception as e:
-            continue
-
+            pass
         try_times -= 1
     else:
         print '网络请求失败，请重试...'
+        return
 
     pt = prettytable.PrettyTable(
         field_names=['车次', '始发站', '目的站', '运行时间', '发车时间', '到达时间',
