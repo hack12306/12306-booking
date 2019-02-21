@@ -75,8 +75,8 @@ def do_booking(train_date, train_names, seat_types, from_station, to_station, pa
 @click.option('--seat-types', required=True, help=u'座位席别， 例如：硬卧,硬座')
 @click.option('--from-station', required=True, help=u'始发站')
 @click.option('--to-station', required=True, help=u'到达站')
-@click.option('--pay-channel', type=click.Choice(['微信', '支付宝']), default='微信', help=u'支付通道，微信，支付宝')
-@click.option('--passengers', help='乘客，例如：任正非,王石')
+@click.option('--pay-channel', type=click.Choice(['微信', '支付宝']), default=u'微信', help=u'支付通道，微信，支付宝')
+@click.option('--passengers', help=u'乘客，例如：任正非,王石')
 def booking_sub_cmd(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers):
     """
     定火车票
@@ -187,8 +187,8 @@ def query_left_ticket(from_station, to_station, date):
 @click.option('--seat-types', required=True, help=u'座位席别， 例如：硬卧,硬座')
 @click.option('--from-station', required=True, help=u'始发站')
 @click.option('--to-station', required=True, help=u'到达站')
-@click.option('--pay-channel', type=click.Choice(['微信', '支付宝']), default='微信', help=u'支付通道，微信，支付宝')
-@click.option('--passengers', help='乘客，例如：任正非,王石')
+@click.option('--pay-channel', type=click.Choice(['微信', '支付宝']), default=u'微信', help=u'支付通道，微信，支付宝')
+@click.option('--passengers', help=u'乘客，例如：任正非,王石')
 def booking(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers):
     """
     定火车票
