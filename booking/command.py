@@ -50,10 +50,10 @@ def do_booking(train_date, train_names, seat_types, from_station, to_station, pa
     from_station = station_code_map[from_station]
     to_station = station_code_map[to_station]
 
-    assert pay_channel in ('微信', '支付宝'), '不支持的支付通道. %s' % pay_channel
-    if pay_channel == '微信':
+    assert pay_channel in (u'微信', u'支付宝'), u'不支持的支付通道. %s' % pay_channel
+    if pay_channel == u'微信':
         pay_channel = BANK_ID_WX
-    elif pay_channel == '支付宝':
+    elif pay_channel == u'支付宝':
         pay_channel = BANK_ID_ALIPAY
     else:
         assert False
@@ -75,7 +75,7 @@ def do_booking(train_date, train_names, seat_types, from_station, to_station, pa
 @click.option('--seat-types', required=True, help=u'座位席别， 例如：硬卧,硬座')
 @click.option('--from-station', required=True, help=u'始发站')
 @click.option('--to-station', required=True, help=u'到达站')
-@click.option('--pay-channel', type=click.Choice(['微信', '支付宝']), default=u'微信', help=u'支付通道，微信，支付宝')
+@click.option('--pay-channel', type=click.Choice([u'微信', u'支付宝']), default=u'微信', help=u'支付通道，微信，支付宝')
 @click.option('--passengers', help=u'乘客，例如：任正非,王石')
 def booking_sub_cmd(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers):
     """
@@ -187,7 +187,7 @@ def query_left_ticket(from_station, to_station, date):
 @click.option('--seat-types', required=True, help=u'座位席别， 例如：硬卧,硬座')
 @click.option('--from-station', required=True, help=u'始发站')
 @click.option('--to-station', required=True, help=u'到达站')
-@click.option('--pay-channel', type=click.Choice(['微信', '支付宝']), default=u'微信', help=u'支付通道，微信，支付宝')
+@click.option('--pay-channel', type=click.Choice([u'微信', u'支付宝']), default=u'微信', help=u'支付通道，微信，支付宝')
 @click.option('--passengers', help=u'乘客，例如：任正非,王石')
 def booking(train_date, train_names, seat_types, from_station, to_station, pay_channel, passengers):
     """
