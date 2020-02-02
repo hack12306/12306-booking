@@ -31,11 +31,11 @@ pip install 12306-booking -U --user;
 
 ## 订票流程
 
-![订票流程](https://processon.com/chart_image/5c372ce1e4b08a7683a2798f.png)
+![订票流程](imgs/12306订票流程.png)
 
 ## 订票状态机
 
-![订票状态机](http://processon.com/chart_image/5c371a11e4b0641c83d6eb3f.png)
+![订票状态机](imgs/12306订票状态机.png)
 
 
 ## 赞助
